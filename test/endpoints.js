@@ -205,3 +205,55 @@ test.serial.cb('POST Update target - target not present', function (t) {
     t.end()
   }
 })
+
+test.serial.cb('POST Route - request accepted ', function (t) {
+  var url = '/route'
+  var options = { encoding: 'json', method: 'POST' }
+
+  var expected = {
+    status: 'success',
+    data: { url: 'http://ikea.com' }
+  }
+  var visitor = {
+    geoState: 'ca',
+    publisher: 'abc',
+    timestamp: '2020-08-21T15:28:59.513Z'
+  }
+
+  servertest(server(), url, options, onResponse)
+    .end(JSON.stringify(visitor))
+
+  function onResponse (err, res) {
+    t.falsy(err, 'no error')
+
+    t.is(res.statusCode, 200, 'correct statusCode')
+    t.deepEqual(res.body, expected, 'values should match')
+    t.end()
+  }
+})
+
+test.serial.cb('POST Route - request rejected ', function (t) {
+  var url = '/route'
+  var options = { encoding: 'json', method: 'POST' }
+
+  var expected = {
+    status: 'success',
+    data: { decision: 'reject' }
+  }
+  var visitor = {
+    geoState: 'ui',
+    publisher: 'abc',
+    timestamp: '2020-08-21T15:28:59.513Z'
+  }
+
+  servertest(server(), url, options, onResponse)
+    .end(JSON.stringify(visitor))
+
+  function onResponse (err, res) {
+    t.falsy(err, 'no error')
+
+    t.is(res.statusCode, 200, 'correct statusCode')
+    t.deepEqual(res.body, expected, 'values should match')
+    t.end()
+  }
+})
